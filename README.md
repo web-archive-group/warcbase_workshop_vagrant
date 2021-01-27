@@ -51,6 +51,8 @@ You can add any Spark flags to the build if you need too.
 docker run --rm -it archivesunleashed/docker-aut:latest /spark/bin/spark-shell --packages "io.archivesunleashed:aut:0.80.1-SNAPSHOT" --conf spark.network.timeout=100000000 --conf spark.executor.heartbeatInterval=6000s
 ```
 
+### Spark Shell (Scala)
+
 Once the build finishes, you should see:
 
 ```bash
@@ -74,55 +76,13 @@ Welcome to
     _\ \/ _ \/ _ `/ __/  '_/
    /___/ .__/\_,_/_/ /_/\_\   version 3.0.0
       /_/
-         
+
 Using Scala version 2.12.10 (OpenJDK 64-Bit Server VM, Java 11.0.7)
 Type in expressions to have them evaluated.
 Type :help for more information.
 
-scala> 
+scala>
 ```
-
-### PySpark
-
-It is also possible to start an interactive PySpark console. This requires specifying Python bindings and the `aut` package, both of which are included in the Docker image under `/aut/target`.
-
-To lauch an interactive PySpark console:
-
-```
-docker run --rm -it archivesunleashed/docker-aut /spark/bin/pyspark --py-files /aut/target/aut.zip --jars /aut/target/aut-0.80.1-SNAPSHOT-fatjar.jar
-```
-
-Once the build finishes you should see:
-
-```bash
-Python 3.7.3 (default, Dec 20 2019, 18:57:59) 
-[GCC 8.3.0] on linux
-Type "help", "copyright", "credits" or "license" for more information.
-WARNING: An illegal reflective access operation has occurred
-WARNING: Illegal reflective access by org.apache.spark.unsafe.Platform (file:/spark/jars/spark-unsafe_2.12-3.0.0.jar) to constructor java.nio.DirectByteBuffer(long,int)
-WARNING: Please consider reporting this to the maintainers of org.apache.spark.unsafe.Platform
-WARNING: Use --illegal-access=warn to enable warnings of further illegal reflective access operations
-WARNING: All illegal access operations will be denied in a future release
-20/06/18 14:02:05 WARN NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
-Using Spark's default log4j profile: org/apache/spark/log4j-defaults.properties
-Setting default log level to "WARN".
-To adjust logging level use sc.setLogLevel(newLevel). For SparkR, use setLogLevel(newLevel).
-Welcome to
-      ____              __
-     / __/__  ___ _____/ /__
-    _\ \/ _ \/ _ `/ __/  '_/
-   /__ / .__/\_,_/_/ /_/\_\   version 3.0.0
-      /_/
-
-Using Python version 3.7.3 (default, Dec 20 2019 18:57:59)
-SparkSession available as 'spark'.
->>> 
-```
-
-## Example
-
-
-### Spark Shell (Scala)
 
 When the image is running, you will be brought to the Spark Shell interface. Try running the following command.
 
@@ -143,7 +103,7 @@ RecordLoader.loadArchives("/aut-resources/Sample-Data/*.gz", sc).webgraph().show
 Press Ctrl+D in order to execute the script. You should then see the following:
 
 ```
-+----------+--------------------+--------------------+--------------------+     
++----------+--------------------+--------------------+--------------------+
 |crawl_date|                 src|                dest|              anchor|
 +----------+--------------------+--------------------+--------------------+
 |  20060622|http://www.gca.ca...|http://www.cleann...|                    |
@@ -159,16 +119,51 @@ Press Ctrl+D in order to execute the script. You should then see the following:
 +----------+--------------------+--------------------+--------------------+
 only showing top 10 rows
 
-import io.archivesunleashed._
+>>>
 ```
-
+~
 In this case, things are working! Try substituting your own data (mounted using the command above).
 
 To quit Spark Shell, you can exit using <kbd>CTRL</kbd>+<kbd>c</kbd>.
 
 ### PySpark
 
-When the images is running, you will be brought to the PySpark interface. Try running the following commands:
+It is also possible to start an interactive PySpark console. This requires specifying Python bindings and the `aut` package, both of which are included in the Docker image under `/aut/target`.
+
+To lauch an interactive PySpark console:
+
+```
+docker run --rm -it archivesunleashed/docker-aut /spark/bin/pyspark --py-files /aut/target/aut.zip --jars /aut/target/aut-0.80.1-SNAPSHOT-fatjar.jar
+```
+
+Once the build finishes you should see:
+
+```bash
+Python 3.7.3 (default, Dec 20 2019, 18:57:59)
+[GCC 8.3.0] on linux
+Type "help", "copyright", "credits" or "license" for more information.
+WARNING: An illegal reflective access operation has occurred
+WARNING: Illegal reflective access by org.apache.spark.unsafe.Platform (file:/spark/jars/spark-unsafe_2.12-3.0.0.jar) to constructor java.nio.DirectByteBuffer(long,int)
+WARNING: Please consider reporting this to the maintainers of org.apache.spark.unsafe.Platform
+WARNING: Use --illegal-access=warn to enable warnings of further illegal reflective access operations
+WARNING: All illegal access operations will be denied in a future release
+20/06/18 14:02:05 WARN NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+Using Spark's default log4j profile: org/apache/spark/log4j-defaults.properties
+Setting default log level to "WARN".
+To adjust logging level use sc.setLogLevel(newLevel). For SparkR, use setLogLevel(newLevel).
+Welcome to
+      ____              __
+     / __/__  ___ _____/ /__
+    _\ \/ _ \/ _ `/ __/  '_/
+   /__ / .__/\_,_/_/ /_/\_\   version 3.0.0
+      /_/
+
+Using Python version 3.7.3 (default, Dec 20 2019 18:57:59)
+SparkSession available as 'spark'.
+>>>
+```
+
+Try running the following commands:
 
 ```python
 from aut import *
@@ -178,7 +173,7 @@ WebArchive(sc, sqlContext, "/aut-resources/Sample-Data/*.gz").webgraph().show(10
 You should then see the following:
 
 ```
-+----------+--------------------+--------------------+--------------------+     
++----------+--------------------+--------------------+--------------------+
 |crawl_date|                 src|                dest|              anchor|
 +----------+--------------------+--------------------+--------------------+
 |  20060622|http://www.gca.ca...|http://www.cleann...|                    |
@@ -194,12 +189,88 @@ You should then see the following:
 +----------+--------------------+--------------------+--------------------+
 only showing top 10 rows
 
->>> 
+>>>
 ```
 
 In this case, things are working! Try substituting your own data (mounted using the command above).
 
 To quit the PySpark console, you can exit using <kbd>CTRL</kbd>+<kbd>c</kbd>.
+
+For more information, see the [Archives Unleashed Toolkit with PySpark](https://github.com/archivesunleashed/aut#archives-unleashed-toolkit-with-pyspark) of the Toolkit README.
+
+_Specifying Java/Scala packages with `--jars` will use local (inside the container) JAR files.
+It is also possible to download these packages from maven central by specifying `--packages` instead of `--jars`._
+
+_Note: downloading packages is taking a while and must be done every time the container starts;
+using `--jars` is faster!_
+
+```bash
+$ docker run -it --rm archivesunleashed/docker-aut \
+  /spark/bin/pyspark \
+  --py-files /aut/target/aut.zip \
+  --packages "io.archivesunleashed:aut:0.70" # Download Java/Scala packages from maven central
+```
+
+### Running Python Scripts through `spark-submit`
+
+Using the Shell it is, for example, not possible to save a script and run it again, at a later time.
+To run a Python script which exists in a separate file pass it to `spark-submit`, which is also part of the AUT Docker container.
+Running a Python script through `spark-submit` requires modifications to `docker run` and the creation of a `SparkContext` and an `SQLContext` inside the script.
+
+First, make sure your script imports and creates both a `SparkContext` and an `SQLContext`, as shown below.
+
+```python
+from pyspark import SparkContext, SQLContext   # required!
+from aut import *
+
+sc = SparkContext.getOrCreate()                # create SparkContext...
+sqlContext = SQLContext(sc)                    # and SQLContext, based on SparkContext
+
+# now use WebArchive as usual
+WebArchive(sc, sqlContext, "/in").all() \      # process WARCs residing in /in, see below.
+  .select("url") \
+  .write.text("/out/result/")
+```
+
+The Python script to pass `spark-submit` exists outside the Docker container, the same holds for WARC files to be processed by that script;
+finally, the results generated by the script must be retained after the Docker container exists and gets removed.
+Therefore, it is required to bind several local directories to directories inside the Docker, supplying `-v` to `docker run`.
+Using `-v`, a host file or directory (local machine) is bound to a container file or directory (inside the container).
+
+On the local machine, it is assumed that the WARCs to process have been placed inside `in-local`, the script `process.py` has been put into `script-local` and the output generated is expected inside the directory `out-local`. _Note: the suffix `-local` has been appended for clarity, to distinguish host directories from container directories._
+
+```
+in-local
+  archive1.warc.gz
+  archive2.warc.gz
+  archive3.warc.gz
+out-local
+  # (no output yet)
+script-local
+  process.py
+```
+
+With everything in place, submit the Python script to `spark-submit` with the following invocation of `docker run`. The host directories `in-local`, `out-local` and `script-local` will be mounted to the container directories `/in`, `/out` and `/script`, respectively.
+
+```shell
+docker run --rm -it \
+       -v $(pwd)/in-local/:/in \
+       -v $(pwd)/out-local/:/out \
+       -v $(pwd)/script-local/:/script \
+       archivesunleashed/docker-aut \
+       /spark/bin/spark-submit \
+       --driver-memory 4G \
+       --py-files /aut/target/aut.zip \
+       --jars /aut/target/aut-0.80.1-SNAPSHOT-fatjar.jar \
+       /script/process.py
+```
+
+All flags after `/spark/bin/spark-submit` will be passed to Spark.
+The `--driver-memory` flag is optional; when processing large amounts of data, it may be necessary to allow more memory to Spark. See [here](https://aut.docs.archivesunleashed.org/docs/aut-at-scale) for details.
+
+Inside the script, which is running inside the container, the WARC files can be found in `/in`, results should be written into `/out` and the script itself resides in `/script`.
+
+After executing the script, the results produced can be found inside `out-local`.
 
 ## Resources
 
